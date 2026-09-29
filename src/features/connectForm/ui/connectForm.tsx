@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { checkAccountRequest } from '../api/connect';
+import { useRouter } from 'next/navigation';
 
 /**
  * Пропсы для формы подключения
@@ -9,6 +11,7 @@ import { useState, FormEvent } from 'react';
 export type ConnectInstanceFormProps = {
   idInstaсe: string;
   apiTokenInstaсe: string;
+  phoneNumber: number;
 };
 
 /**
@@ -16,15 +19,15 @@ export type ConnectInstanceFormProps = {
  */
 
 export const ConnectInstanseForm = () => {
-  const [idInstance, setIdInstance] = useState('');
-  const [apiTokenInstance, setApiTokenInstance] = useState('');
+  const router = useRouter();
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSumit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     setError('');
 
-    if (!idInstance.trim() || !apiTokenInstance.trim()) {
+    if (!idInstance.trim() || !apiTokenInstance.trim() || !phoneNumber) {
       setError('Заполните все поля');
       return;
     }
@@ -38,6 +41,7 @@ export const ConnectInstanseForm = () => {
 
           <input
             type="text"
+            required
             value={idInstance}
             onChange={(event) => setIdInstance(event.target.value)}
             placeholder="Введите Id Istance"
@@ -46,9 +50,21 @@ export const ConnectInstanseForm = () => {
 
           <input
             type="text"
+            required
             value={apiTokenInstance}
             onChange={(event) => setApiTokenInstance(event.target.value)}
             placeholder="Введите Api Token Instaсe"
+            className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
+          ></input>
+
+          <input
+            id="number"
+            type="tel"
+            required
+            value={phoneNumber}
+            minLength={11}
+            onChange={(event) => setphoneNumber(event.target.value)}
+            placeholder="Введите ваш phonе 700000000000"
             className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
           ></input>
 
