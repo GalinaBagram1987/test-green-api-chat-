@@ -5,6 +5,9 @@ import { checkAccountRequest } from '../api/connect';
 import type { CheckAccountState } from './types';
 
 export const useCheckAccountStore = create<CheckAccountState>((set) => ({
+  idInstance: '',
+  apiTokenInstance: '',
+
   status: 'idle',
   result: null,
   error: null,
@@ -21,12 +24,14 @@ export const useCheckAccountStore = create<CheckAccountState>((set) => ({
         idInstance,
         apiTokenInstance,
         data: {
-          phoneNumber,
+          phoneNumber: Number(phoneNumber),
           force: true,
         },
       });
 
       set({
+        idInstance,
+        apiTokenInstance,
         status: 'success',
         result,
         error: null,
@@ -36,7 +41,9 @@ export const useCheckAccountStore = create<CheckAccountState>((set) => ({
 
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
-        const reason = error.response?.data?.reason;
+        const responseData = error.response?.data as { reason?: unknown } | undefined;
+
+        const reason = responseData?.reason;
 
         if (status === 469) {
           message = 'Превышен лимит проверок. Повторите попытку позже.';
@@ -57,6 +64,8 @@ export const useCheckAccountStore = create<CheckAccountState>((set) => ({
 
   reset: () => {
     set({
+      idInstance: '',
+      apiTokenInstance: '',
       status: 'idle',
       result: null,
       error: null,

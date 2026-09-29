@@ -3,15 +3,17 @@ import type { CheckAccountResponse } from '../api/type';
 export type CheckAccountStatus = 'idle' | 'loading' | 'success' | 'error'; //idle - ждем пользователя
 
 export interface CheckAccountState {
-  status: CheckAccountStatus;
+  idInstance: string;
+  apiTokenInstance: string;
+
+  status: 'idle' | 'loading' | 'success' | 'error';
   result: CheckAccountResponse | null;
   error: string | null;
 
   checkAccount: (
-    // это функция, которая вызывает API и обновляет состояние стора.
     idInstance: string,
     apiTokenInstance: string,
-    phoneNumber: number,
+    phoneNumber: string,
   ) => Promise<void>;
 
   reset: () => void;

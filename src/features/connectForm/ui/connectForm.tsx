@@ -39,7 +39,7 @@ export const ConnectInstanseForm = () => {
 
     const preparedIdInstance = idInstance.trim();
     const preparedApiTokenInstance = apiTokenInstance.trim();
-    const preparedPhoneNumber = Number(phoneNumber.trim());
+    const preparedPhoneNumber = phoneNumber.trim();
 
     if (!preparedIdInstance || !preparedApiTokenInstance || !preparedPhoneNumber) {
       setValidationError('Заполните все поля');
