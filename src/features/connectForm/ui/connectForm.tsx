@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { checkAccountRequest } from '../api/connect';
+import { useState, useEffect, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { useCheckAccountStore } from '../module/store';
 
 /**
  * Пропсы для формы подключения
@@ -20,19 +20,36 @@ export type ConnectInstanceFormProps = {
 
 export const ConnectInstanseForm = () => {
   const router = useRouter();
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [idInstance, setIdInstance] = useState('');
+  const [apiTokenInstance, setApiTokenInstance] = useState('');
+  const [phoneNumber, setphoneNumber] = useState('');
+  const [validationError, setValidationError] = useState('');
 
-  const handleSumit = (e: FormEvent<HTMLFormElement>): void => {
+  const checkAccount = useCheckAccountStore((state) => state.checkAccount);
+  const status = useCheckAccountStore((state) => state.status);
+  const requestError = useCheckAccountStore((state) => state.error);
+
+  useEffect(() => {
+    router.replace('/create-chat');
+  }, [status, router]);
+
+  const handleSumit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setError('');
+    setValidationError('');
 
-    if (!idInstance.trim() || !apiTokenInstance.trim() || !phoneNumber) {
-      setError('Заполните все поля');
+    const preparedIdInstance = idInstance.trim();
+    const preparedApiTokenInstance = apiTokenInstance.trim();
+    const preparedPhoneNumber = Number(phoneNumber.trim());
+
+    if (!preparedIdInstance || !preparedApiTokenInstance || !preparedPhoneNumber) {
+      setValidationError('Заполните все поля');
       return;
     }
+
+    await checkAccount(preparedIdInstance, preparedApiTokenInstance, preparedPhoneNumber);
   };
 
+  const error = validationError || requestError;
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="max-w-xl max-h-max p-10 w-100 h-200 bg-neutral-50 rounded-2xl border-neutral-400 border-2 border-solid shadow-2xl">
