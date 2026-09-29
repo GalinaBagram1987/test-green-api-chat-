@@ -12,8 +12,8 @@ export type {
   DeleteNotificationResponse,
 } from './types.ts';
 
-export { deleteNotification } from './delete-messages.js';
+export { deleteNotification } from './delete-messages';
 export { getNotificationText } from './getNotificationText';
-export { receiveNotification } from './recieveMessage.js';
-export { sendMessage } from './sendMessage.js';
-export { startNotificationsPolling } from './startNotifcationPolling.js';
+export { receiveNotification } from './recieveMessage';
+export { sendMessage } from './sendMessage';
+export { startNotificationsPolling } from './startNotifcationPolling';

@@ -14,6 +14,8 @@ export const useCheckAccountStore = create<CheckAccountState>((set) => ({
 
   checkAccount: async (idInstance, apiTokenInstance, phoneNumber) => {
     set({
+      idInstance,
+      apiTokenInstance,
       status: 'loading',
       result: null,
       error: null,
