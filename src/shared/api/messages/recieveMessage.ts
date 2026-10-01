@@ -1,11 +1,12 @@
 import { axiosInstance } from '../axiosInstance';
+
 import type { ReceiveNotificationResponse, ReceiveNotificationParams } from './types';
 
 type Params = ReceiveNotificationParams & {
   signal?: AbortSignal;
 };
 
-export const receiveNotification = async ({
+export const receiveMessage = async ({
   idInstance,
   apiTokenInstance,
   receiveTimeout = 5,

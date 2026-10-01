@@ -1,16 +1,16 @@
-import axios from 'axios';
+import { receiveMessage } from './recieveMessage';
 
-import { deleteNotification } from './delete-messages';
-import { receiveNotification } from './recieveMessage';
+const isCanceledRequest = (error: unknown): boolean => {
+  if (typeof error !== 'object' || error === null) {
+    return false;
+  }
 
-import type { ReceiveNotificationResponse } from './types';
+  const requestError = error as {
+    name?: unknown;
+    code?: unknown;
+  };
 
-type StartNotificationsPollingParams = {
-  idInstance: string;
-  apiTokenInstance: string;
-  signal: AbortSignal;
-  onNotification: (notification: ReceiveNotificationResponse) => void | Promise<void>;
-  onError?: (error: unknown) => void;
+  return requestError.name === 'CanceledError' || requestError.code === 'ERR_CANCELED';
 };
 
 export const startNotificationsPolling = async ({
@@ -19,41 +19,58 @@ export const startNotificationsPolling = async ({
   signal,
   onNotification,
   onError,
-}: StartNotificationsPollingParams): Promise<void> => {
+}: {
+  idInstance: string;
+  apiTokenInstance: string;
+  signal: AbortSignal;
+  onNotification: (
+    notification: NonNullable<Awaited<ReturnType<typeof receiveMessage>>>,
+  ) => Promise<void> | void;
+  onError?: (error: unknown) => void;
+}): Promise<void> => {
+  console.log('[polling] LOOP START');
+
   while (!signal.aborted) {
     try {
-      const notification = await receiveNotification({
+      console.log('[polling] WAIT NOTIFICATION');
+
+      // Именно этот вызов запускает запрос,
+      // находящийся внутри receiveMessage.
+      const notification = await receiveMessage({
         idInstance,
         apiTokenInstance,
-        receiveTimeout: 5,
         signal,
       });
 
-      if (!notification) {
-        continue;
-      }
+      if (signal.aborted) {
+        console.log('[polling] ABORTED');
 
-      // Сначала полностью обрабатываем уведомление
-      await onNotification(notification);
-
-      // Только после успешной обработки удаляем его
-      await deleteNotification({
-        idInstance,
-        apiTokenInstance,
-        receiptId: notification.receiptId,
-      });
-    } catch (error: unknown) {
-      if (
-        signal.aborted ||
-        axios.isCancel(error) ||
-        (error instanceof DOMException && error.name === 'AbortError')
-      ) {
         return;
       }
 
+      if (!notification) {
+        console.log('[polling] EMPTY RESPONSE');
+
+        continue;
+      }
+
+      console.log('[polling] NOTIFICATION RECEIVED', {
+        receiptId: notification.receiptId,
+        typeWebhook: notification.body?.typeWebhook,
+      });
+
+      await onNotification(notification);
+    } catch (error: unknown) {
+      if (signal.aborted || isCanceledRequest(error)) {
+        console.log('[polling] REQUEST CANCELLED');
+
+        return;
+      }
+
+      console.error('[polling] REQUEST FAILED', error instanceof Error ? error.message : error);
+
       onError?.(error);
 
-      // После сетевой ошибки не запускаем запросы слишком часто
       await new Promise<void>((resolve) => {
         window.setTimeout(resolve, 1000);
       });

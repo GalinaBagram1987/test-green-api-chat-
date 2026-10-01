@@ -6,26 +6,28 @@ import { getNotificationText, startNotificationsPolling } from '@/shared/api/mes
 
 import type { ReceiveNotificationResponse } from '@/shared/api/messages';
 
-import { ChatMessage } from '@/features/chat/model/types';
 import { WidgetChatMessage } from '../model/types';
 import { useChatStore } from '@/features/chat/model/store';
+import { useCheckAccountStore } from '@/features/connectForm/module/store';
 
 import { MessageForm } from './messageForm';
 import { MessageList } from './messageList';
 import { SideBar } from './sideBar';
 
-type ChatProps = {
-  idInstance: string;
-  apiTokenInstance: string;
-};
-
-export const Chat = ({ idInstance, apiTokenInstance }: ChatProps) => {
+export const Chat = () => {
   const chatId = useChatStore((state) => state.chatId);
-  const error = useChatStore((state) => state.error);
 
   const addMessage = useChatStore((state) => state.addMessage);
 
+  const error = useChatStore((state) => state.error);
+
   const setError = useChatStore((state) => state.setError);
+
+  const idInstance = useCheckAccountStore((state) => state.idInstance);
+
+  const apiTokenInstance = useCheckAccountStore((state) => state.apiTokenInstance);
+
+  const messages = useChatStore((state) => state.messages);
 
   useEffect(() => {
     if (!chatId || !idInstance || !apiTokenInstance) {
@@ -103,7 +105,7 @@ export const Chat = ({ idInstance, apiTokenInstance }: ChatProps) => {
       <SideBar chatId={chatId} />
 
       <section className="flex min-h-0 flex-1 flex-col">
-        <MessageList />
+        <MessageList messages={messages} />
 
         {error && (
           <p className="px-4 py-2 text-sm text-red-500" role="alert">

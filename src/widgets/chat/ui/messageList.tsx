@@ -1,23 +1,14 @@
-'use client';
-
-import { useChatStore } from '@/features/chat/model/store';
+import type { ChatMessage } from '@/features/chat/model/types';
 
 import { MessageItem } from './messageItem';
 
-export const MessageList = () => {
-  // сообщения получаем непосредственно из store.
-  const messages = useChatStore((state) => state.messages);
+type MessageListProps = {
+  messages: ChatMessage[];
+};
 
-  if (messages.length === 0) {
-    return (
-      <div className="flex min-h-[200px] flex-1 items-center justify-center p-4">
-        <p className="text-sm text-neutral-500">Сообщений пока нет</p>
-      </div>
-    );
-  }
-
+export const MessageList = ({ messages }: MessageListProps) => {
   return (
-    <div className="flex min-h-[200px] flex-1 flex-col gap-2 overflow-y-auto p-4">
+    <div className="flex flex-col gap-2">
       {messages.map((message) => (
         <MessageItem key={message.id} message={message} />
       ))}

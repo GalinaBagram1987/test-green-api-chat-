@@ -14,6 +14,6 @@ export type {
 
 export { deleteNotification } from './delete-messages';
 export { getNotificationText } from './getNotificationText';
-export { receiveNotification } from './recieveMessage';
+export { receiveMessage } from './recieveMessage';
 export { sendMessage } from './sendMessage';
 export { startNotificationsPolling } from './startNotifcationPolling';

@@ -1,5 +1,5 @@
 /**
- * type for send message
+ * Type for sending a message
  */
 
 export type SendMessageData = {
@@ -12,13 +12,14 @@ export type SendMessageResponse = {
 };
 
 /**
- * types for input message
+ * Types for receiving messages
  */
 
 export type ReceiveNotificationParams = {
   idInstance: string;
   apiTokenInstance: string;
   receiveTimeout?: number;
+  signal?: AbortSignal;
 };
 
 export type SenderData = {
@@ -52,11 +53,13 @@ export type MessageData = {
 
 export type NotificationBody = {
   typeWebhook: string;
+
   instanceData?: {
     idInstance: number;
     wid: string;
     typeInstance: string;
   };
+
   timestamp?: number;
   idMessage?: string;
   senderData?: SenderData;
@@ -70,6 +73,8 @@ export type ReceiveNotificationResponse = {
   body: NotificationBody;
 };
 
+export type ReceiveNotificationResult = ReceiveNotificationResponse | null;
+
 export type DeleteNotificationParams = {
   idInstance: string;
   apiTokenInstance: string;
@@ -79,33 +84,3 @@ export type DeleteNotificationParams = {
 export type DeleteNotificationResponse = {
   result: boolean;
 };
-
-// export type ReceiveNotificationResponse = {
-//   receiptId: number;
-//   body: {
-//     typeWebhook: 'incomingMessageReceived';
-//     instanceData: {
-//       idInstance: number;
-//       wid: string;
-//       typeInstance: string;
-//     };
-//     timestamp: number;
-//     idMessage: string;
-//     senderData: {
-//       chatId: string;
-//       chatName: string;
-//       chatType: 'user';
-//       sender: string;
-//       senderName: string;
-//       senderType: 'user';
-//       senderContactName?: string;
-//       senderPhoneNumber?: number;
-//     };
-//     messageData: {
-//       typeMessage: 'textMessage';
-//       textMessageData: {
-//         textMessage: string;
-//       };
-//     };
-//   };
-// } | null;
