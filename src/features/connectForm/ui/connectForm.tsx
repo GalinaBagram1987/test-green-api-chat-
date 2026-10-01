@@ -1,22 +1,9 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+
 import { useCheckAccountStore } from '../module/store';
-
-/**
- * Пропсы для формы подключения
- */
-
-export type ConnectInstanceFormProps = {
-  idInstaсe: string;
-  apiTokenInstaсe: string;
-  phoneNumber: number;
-};
-
-/**
- * Форма запроса
- */
 
 export const ConnectInstanseForm = () => {
   const router = useRouter();
@@ -28,15 +15,15 @@ export const ConnectInstanseForm = () => {
 
   const checkAccount = useCheckAccountStore((state) => state.checkAccount);
 
-  const status = useCheckAccountStore((state) => state.status);
+  const connectionStatus = useCheckAccountStore((state) => state.status);
 
-  const requestError = useCheckAccountStore((state) => state.error);
+  const connectionError = useCheckAccountStore((state) => state.error);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (connectionStatus === 'success') {
       router.replace('/create-chat');
     }
-  }, [status, router]);
+  }, [connectionStatus, router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
@@ -44,17 +31,25 @@ export const ConnectInstanseForm = () => {
 
     const preparedIdInstance = idInstance.trim();
     const preparedApiTokenInstance = apiTokenInstance.trim();
-    const preparedPhoneNumber = phoneNumber.trim();
+
+    const preparedPhoneNumber = phoneNumber.replace(/\D/g, '').trim();
 
     if (!preparedIdInstance || !preparedApiTokenInstance || !preparedPhoneNumber) {
       setValidationError('Заполните все поля');
       return;
     }
 
+    if (preparedPhoneNumber.length < 11) {
+      setValidationError('Введите корректный номер телефона');
+      return;
+    }
+
     await checkAccount(preparedIdInstance, preparedApiTokenInstance, preparedPhoneNumber);
   };
 
-  const error = validationError || requestError;
+  const error = validationError || connectionError;
+
+  const isLoading = connectionStatus === 'loading';
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -96,7 +91,7 @@ export const ConnectInstanseForm = () => {
               setPhoneNumber(event.target.value);
               setValidationError('');
             }}
-            placeholder="Введите ваш phone 700000000000"
+            placeholder="Введите номер 70000000000"
             className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
           />
 
@@ -108,10 +103,10 @@ export const ConnectInstanseForm = () => {
 
           <button
             type="submit"
-            disabled={status === 'loading'}
+            disabled={isLoading}
             className="w-full rounded-lg bg-sky-500 px-4 py-3 font-medium text-white hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {status === 'loading' ? 'Подключение...' : 'Подключиться'}
+            {isLoading ? 'Подключение...' : 'Подключиться'}
           </button>
         </form>
       </div>

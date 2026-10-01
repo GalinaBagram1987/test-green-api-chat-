@@ -22,7 +22,12 @@ export interface ChatState {
   error: string | null;
 
   setChat: (phoneNumber: string) => void;
+
+  startChat: (phoneNumber: string, firstMessage?: string) => Promise<boolean>;
+
   loadMessages: () => Promise<void>;
+
   sendMessage: (message: string) => Promise<void>;
+
   reset: () => void;
 }
