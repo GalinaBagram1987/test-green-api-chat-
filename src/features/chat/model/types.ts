@@ -29,5 +29,9 @@ export interface ChatState {
 
   sendMessage: (message: string) => Promise<void>;
 
+  addMessage: (message: ChatMessage) => void;
+
   reset: () => void;
+
+  setError: (error: string | null) => void;
 }

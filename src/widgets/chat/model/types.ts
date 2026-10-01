@@ -1,11 +1,14 @@
-export type MessageDirection = 'incoming' | 'outgoing';
+export type WidgetMessageDirection = 'incoming' | 'outgoing';
 
-export type ChatMessage = {
+export type WidgetMessageSendingStatus = 'sending' | 'sent' | 'error';
+
+export type WidgetChatMessage = {
   id: string;
   chatId: string;
   text: string;
   timestamp: number;
-  direction: 'incoming' | 'outgoing';
+  direction: WidgetMessageDirection;
+  sendingStatus: WidgetMessageSendingStatus;
 };
 
 export type UseChatParams = {

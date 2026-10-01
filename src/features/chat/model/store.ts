@@ -266,4 +266,20 @@ export const useChatStore = create<ChatState>((set, get) => ({
       error: null,
     });
   },
+  addMessage: (message) => {
+    set((state) => {
+      const messageAlreadyExists = state.messages.some((item) => item.id === message.id);
+
+      if (messageAlreadyExists) {
+        return state;
+      }
+
+      return {
+        messages: [...state.messages, message],
+      };
+    });
+  },
+  setError: (error) => {
+    set({ error });
+  },
 }));
