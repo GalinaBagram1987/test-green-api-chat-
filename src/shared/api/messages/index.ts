@@ -1,19 +1,19 @@
 export type {
   SendMessageData,
   SendMessageResponse,
-  ReceiveNotificationParams,
+  ReceiveMessageParams,
   SenderData,
   TextMessageData,
   ExtendedTextMessageData,
   MessageData,
-  NotificationBody,
-  ReceiveNotificationResponse,
-  DeleteNotificationParams,
-  DeleteNotificationResponse,
+  MessageBody,
+  ReceiveMessageResponse,
+  DeleteMessageParams,
+  DeleteMessageResponse,
 } from './types.ts';
 
-export { deleteNotification } from './delete-messages';
-export { getNotificationText } from './getNotificationText';
+export { deleteMessage } from './deleteMessage';
+export { getMessageText } from './getMessageText';
 export { receiveMessage } from './recieveMessage';
 export { sendMessage } from './sendMessage';
-export { startNotificationsPolling } from './startNotifcationPolling';
+export { startMessagePolling } from './startMessagePolling';

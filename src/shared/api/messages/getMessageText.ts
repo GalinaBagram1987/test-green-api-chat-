@@ -1,6 +1,6 @@
-import type { NotificationBody } from './types';
+import type { MessageBody } from './types';
 
-export const getNotificationText = (body: NotificationBody): string | null => {
+export const getMessageText = (body: MessageBody): string | null => {
   const messageData = body.messageData;
 
   if (!messageData) {

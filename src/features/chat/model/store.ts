@@ -76,6 +76,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       });
 
       const message: ChatMessage = {
+        chatId: chatId,
         id: response.idMessage,
         text: firstMessage,
         timestamp: Math.floor(Date.now() / 1000),

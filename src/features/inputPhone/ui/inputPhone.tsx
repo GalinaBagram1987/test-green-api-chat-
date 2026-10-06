@@ -9,6 +9,7 @@ export const InputPhone = () => {
 
   const [phone, setPhone] = useState('');
   const [validationError, setValidationError] = useState('');
+  const [criticalError, setCriticalError] = useState('');
 
   const startChat = useChatStore((state) => state.startChat);
 
@@ -19,6 +20,7 @@ export const InputPhone = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setValidationError('');
+    setCriticalError('');
 
     let preparedPhoneNumber = phone.replace(/\D/g, '');
 
@@ -32,14 +34,21 @@ export const InputPhone = () => {
       return;
     }
 
-    const isChatStarted = await startChat(preparedPhoneNumber, 'Привет! Поболтаем?');
+    let isChatStarted = false;
+
+    try {
+      isChatStarted = await startChat(preparedPhoneNumber, 'Привет! Поболтаем?');
+    } catch (error: any) {
+      console.error('Ошибка отправки 1 сообщения, начала чата:', error);
+      setCriticalError('Не удалось начать чат. Проверьте подключение.');
+    }
 
     if (isChatStarted) {
       router.push('/chat');
     }
   };
 
-  const error = validationError || chatError;
+  const currentError = validationError || chatError || criticalError;
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -61,9 +70,9 @@ export const InputPhone = () => {
             className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
           />
 
-          {error && (
+          {currentError && (
             <p className="text-sm text-red-600" role="alert">
-              {error}
+              {currentError}
             </p>
           )}
 

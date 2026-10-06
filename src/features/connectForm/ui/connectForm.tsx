@@ -44,7 +44,12 @@ export const ConnectInstanseForm = () => {
       return;
     }
 
-    await checkAccount(preparedIdInstance, preparedApiTokenInstance, preparedPhoneNumber);
+    try {
+      await checkAccount(preparedIdInstance, preparedApiTokenInstance, preparedPhoneNumber);
+    } catch (storeError) {
+      console.error('[ConnectForm] Critical error during account check:', storeError);
+      setValidationError('Произошла непредвиденная ошибка сети. Попробуйте позже.');
+    }
   };
 
   const error = validationError || connectionError;

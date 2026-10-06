@@ -13,18 +13,18 @@ const isCanceledRequest = (error: unknown): boolean => {
   return requestError.name === 'CanceledError' || requestError.code === 'ERR_CANCELED';
 };
 
-export const startNotificationsPolling = async ({
+export const startMessagePolling = async ({
   idInstance,
   apiTokenInstance,
   signal,
-  onNotification,
+  onMessage,
   onError,
 }: {
   idInstance: string;
   apiTokenInstance: string;
   signal: AbortSignal;
-  onNotification: (
-    notification: NonNullable<Awaited<ReturnType<typeof receiveMessage>>>,
+  onMessage: (
+    Message: NonNullable<Awaited<ReturnType<typeof receiveMessage>>>,
   ) => Promise<void> | void;
   onError?: (error: unknown) => void;
 }): Promise<void> => {
@@ -32,11 +32,11 @@ export const startNotificationsPolling = async ({
 
   while (!signal.aborted) {
     try {
-      console.log('[polling] WAIT NOTIFICATION');
+      console.log('[polling] WAIT Message');
 
       // Именно этот вызов запускает запрос,
       // находящийся внутри receiveMessage.
-      const notification = await receiveMessage({
+      const Message = await receiveMessage({
         idInstance,
         apiTokenInstance,
         signal,
@@ -48,18 +48,18 @@ export const startNotificationsPolling = async ({
         return;
       }
 
-      if (!notification) {
+      if (!Message) {
         console.log('[polling] EMPTY RESPONSE');
 
         continue;
       }
 
-      console.log('[polling] NOTIFICATION RECEIVED', {
-        receiptId: notification.receiptId,
-        typeWebhook: notification.body?.typeWebhook,
+      console.log('[polling] Message RECEIVED', {
+        receiptId: Message.receiptId,
+        typeWebhook: Message.body?.typeWebhook,
       });
 
-      await onNotification(notification);
+      await onMessage(Message);
     } catch (error: unknown) {
       if (signal.aborted || isCanceledRequest(error)) {
         console.log('[polling] REQUEST CANCELLED');
@@ -72,7 +72,7 @@ export const startNotificationsPolling = async ({
       onError?.(error);
 
       await new Promise<void>((resolve) => {
-        window.setTimeout(resolve, 1000);
+        window.setTimeout(resolve, 3000);
       });
     }
   }

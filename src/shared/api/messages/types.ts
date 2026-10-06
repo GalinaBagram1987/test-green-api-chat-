@@ -15,7 +15,7 @@ export type SendMessageResponse = {
  * Types for receiving messages
  */
 
-export type ReceiveNotificationParams = {
+export type ReceiveMessageParams = {
   idInstance: string;
   apiTokenInstance: string;
   receiveTimeout?: number;
@@ -51,7 +51,7 @@ export type MessageData = {
   [key: string]: unknown;
 };
 
-export type NotificationBody = {
+export type MessageBody = {
   typeWebhook: string;
 
   instanceData?: {
@@ -68,19 +68,19 @@ export type NotificationBody = {
   [key: string]: unknown;
 };
 
-export type ReceiveNotificationResponse = {
+export type ReceiveMessageResponse = {
   receiptId: number;
-  body: NotificationBody;
+  body: MessageBody;
 };
 
-export type ReceiveNotificationResult = ReceiveNotificationResponse | null;
+export type ReceiveMessageResult = ReceiveMessageResponse | null;
 
-export type DeleteNotificationParams = {
+export type DeleteMessageParams = {
   idInstance: string;
   apiTokenInstance: string;
   receiptId: number;
 };
 
-export type DeleteNotificationResponse = {
+export type DeleteMessageResponse = {
   result: boolean;
 };
